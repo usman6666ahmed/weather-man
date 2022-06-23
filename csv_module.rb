@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 require 'csv'
+DATE_INDEX = 0
+MAX_TEMP_INDEX = 1
+MIN_TEMP_INDEX = 3
+MAX_HUM_INDEX = 7
+MIN_HUM_INDEX = 9
 
 module CSVModule
   # This represents a singular row
@@ -17,44 +22,71 @@ module CSVModule
 
     @date = ''
 
-    def initialize(date, min_temp, _max_temp, _min_humid, _max_humid)
-      @date = date
+    def initialize(date, min_temp, max_temp, min_humid, max_humid)
+      @date = Date.parse date
 
       @min_temp = min_temp || 0
-      @min_temp = min_temp || 0
-      @min_temp = min_temp || 0
-      @min_temp = min_temp || 0
+      @max_temp = max_temp || 0
+      @min_humid = min_humid || 0
+      @max_humid = max_humid || 0
+    end
+
+    def to_object
+      {
+        'date' => @date,
+        'min_temp' => @min_temp,
+        'max_temp' => @max_temp,
+
+        'min_humid' => @min_humid,
+        'max_humid' => @max_humid
+      }
     end
   end
 
   # Parse and analyze CSVs
   class CSVProcessor
     @columns = []
-    @data = []
-    @index = {
-      'Max Temprature' => 1,
-      'Min Temprature' => 3,
-      'Min Humidity' => 7,
-      'Max Humidity' => 9
+    @rows = []
 
-    }
+    def get_max_temp
+      max_temp = @rows[0]
+      @rows.each do |item|
+        max_temp = item if max_temp.to_object['max_temp'] > item.to_object['max_temp']
+      end
+
+      max_temp.to_object
+    end
+
+    def get_min_temp
+      min_temp = @rows[0]
+      @rows.each do |item|
+        min_temp = item if min_temp.to_object['min_temp'] < item.to_object['min_temp']
+      end
+
+      min_temp.to_object
+    end
 
     def parse_file(file_path)
       data = CSV.read(file_path)
+
+      data = data.reject { |row| row.length.zero? }
+
       columns = data[0].map(&:strip)
+
       data = data[1, data.length - 1]
 
+      rows = []
       data.each do |item|
-        next unless item[@index['Max Temprature']] ||
-                    item[@index['Min Temprature']] ||
-                    item[@index['Max Humidity']] ||
-                    item[@index['Min Humidity']]
+        next unless item[MAX_HUM_INDEX] ||
+                    item[MIN_TEMP_INDEX] ||
+                    item[MAX_HUM_INDEX] ||
+                    item[MIN_HUM_INDEX]
 
-        new_item = DataRow.new(item[0], item[@index['Max Temprature']],
-                               item[@index['Min Temprature']],
-                               item[@index['Max Humidity']],
-                               item[@index['Min Humidity']])
-        @data.push(new_item)
+        new_item = DataRow.new(item[DATE_INDEX], item[MAX_TEMP_INDEX],
+                               item[MIN_TEMP_INDEX],
+                               item[MAX_HUM_INDEX],
+                               item[MIN_HUM_INDEX])
+        rows.push(new_item)
       end
 
       [columns, rows]
@@ -64,10 +96,8 @@ module CSVModule
       if is_folder == true
         puts 'Hi'
       else
-        @columns, @data = parse_file(path)
+        @columns, @rows = parse_file(path)
       end
-
-      puts @data
     end
   end
 end
