@@ -82,8 +82,8 @@ module CSVModule
       }
     end
 
-    def month_data()
-      @rows.map {|row| row.to_object}
+    def month_data
+      @rows.map(&:to_object)
     end
 
     def report
@@ -109,12 +109,12 @@ module CSVModule
 
       rows = []
       data.each do |item|
-        next unless item[MAX_TEMP_INDEX] ||
-                    item[MIN_TEMP_INDEX] ||
+        next unless item[MIN_TEMP_INDEX] ||
+                    item[MAX_TEMP_INDEX] ||
                     item[AVG_HUM_INDEX]
 
-        new_item = DataRow.new(item[DATE_INDEX], item[MAX_TEMP_INDEX],
-                               item[MIN_TEMP_INDEX],
+        new_item = DataRow.new(item[DATE_INDEX], item[MIN_TEMP_INDEX],
+                               item[MAX_TEMP_INDEX],
                                item[AVG_HUM_INDEX])
 
         rows.push(new_item)
