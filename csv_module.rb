@@ -8,7 +8,6 @@ MIN_TEMP_INDEX = 3
 
 AVG_HUM_INDEX = 8
 
-
 module CSVModule
   # This represents a singular row
   # of the dataset
@@ -37,7 +36,7 @@ module CSVModule
         'min_temp' => @min_temp,
         'max_temp' => @max_temp,
 
-        'avg_humid' => @avg_humid,
+        'avg_humid' => @avg_humid
       }
     end
   end
@@ -71,7 +70,7 @@ module CSVModule
       }
     end
 
-    def max_humidty()
+    def max_humidty
       hm = @rows[0]
       @rows.each do |item|
         hm = item if hm.to_object['avg_humid'] < item.to_object['avg_humid']
@@ -83,15 +82,19 @@ module CSVModule
       }
     end
 
-    def report()
+    def month_data()
+      @rows.map {|row| row.to_object}
+    end
+
+    def report
       min = min_temp
       max = max_temp
       hum = max_humidty
 
       {
-        "min" => min,
-        "max" => max,
-        "hum" => hum,
+        'min' => min,
+        'max' => max,
+        'hum' => hum
       }
     end
 
@@ -112,7 +115,7 @@ module CSVModule
 
         new_item = DataRow.new(item[DATE_INDEX], item[MAX_TEMP_INDEX],
                                item[MIN_TEMP_INDEX],
-                               item[AVG_HUM_INDEX],)
+                               item[AVG_HUM_INDEX])
 
         rows.push(new_item)
       end
