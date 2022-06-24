@@ -2,10 +2,12 @@
 
 require 'csv'
 DATE_INDEX = 0
+
 MAX_TEMP_INDEX = 1
 MIN_TEMP_INDEX = 3
-MAX_HUM_INDEX = 7
-MIN_HUM_INDEX = 9
+
+AVG_HUM_INDEX = 8
+
 
 module CSVModule
   # This represents a singular row
@@ -17,18 +19,16 @@ module CSVModule
     @min_temp = 0
     @max_temp = 0
 
-    @min_humid = 0
-    @max_humid = 0
+    @avg_humid = 0
 
     @date = ''
 
-    def initialize(date, min_temp, max_temp, min_humid, max_humid)
+    def initialize(date, min_temp, max_temp, avg_humid)
       @date = Date.parse date
 
       @min_temp = min_temp.to_i || 0
       @max_temp = max_temp.to_i || 0
-      @min_humid = min_humid.to_i || 0
-      @max_humid = max_humid.to_i || 0
+      @avg_humid = avg_humid.to_i || 0
     end
 
     def to_object
@@ -37,8 +37,7 @@ module CSVModule
         'min_temp' => @min_temp,
         'max_temp' => @max_temp,
 
-        'min_humid' => @min_humid,
-        'max_humid' => @max_humid
+        'avg_humid' => @avg_humid,
       }
     end
   end
@@ -54,7 +53,10 @@ module CSVModule
         max = item if max.to_object['max_temp'] < item.to_object['max_temp']
       end
 
-      max.to_object
+      {
+        date: max.to_object['date'],
+        val: max.to_object['max_temp']
+      }
     end
 
     def min_temp
@@ -63,7 +65,34 @@ module CSVModule
         min = item if min.to_object['min_temp'] > item.to_object['min_temp']
       end
 
-      min.to_object
+      {
+        date: min.to_object['date'],
+        val: min.to_object['min_temp']
+      }
+    end
+
+    def max_humidty()
+      hm = @rows[0]
+      @rows.each do |item|
+        hm = item if hm.to_object['avg_humid'] < item.to_object['avg_humid']
+      end
+
+      {
+        date: hm.to_object['date'],
+        val: hm.to_object['avg_humid']
+      }
+    end
+
+    def report()
+      min = min_temp
+      max = max_temp
+      hum = max_humidty
+
+      {
+        "min" => min,
+        "max" => max,
+        "hum" => hum,
+      }
     end
 
     def parse_file(file_path)
@@ -77,24 +106,23 @@ module CSVModule
 
       rows = []
       data.each do |item|
-        next unless item[MAX_HUM_INDEX] ||
+        next unless item[MAX_TEMP_INDEX] ||
                     item[MIN_TEMP_INDEX] ||
-                    item[MAX_HUM_INDEX] ||
-                    item[MIN_HUM_INDEX]
+                    item[AVG_HUM_INDEX]
 
         new_item = DataRow.new(item[DATE_INDEX], item[MAX_TEMP_INDEX],
                                item[MIN_TEMP_INDEX],
-                               item[MAX_HUM_INDEX],
-                               item[MIN_HUM_INDEX])
+                               item[AVG_HUM_INDEX],)
+
         rows.push(new_item)
       end
 
       [columns, rows]
     end
 
-    def initialize(path, is_folder)
+    def initialize(path, is_folder, date)
       if is_folder == true
-        csv_files = Dir[path].select { |name| name.include? '.txt' }
+        csv_files = Dir[path].select { |name| name.include? date }
 
         csv_files.each do |file|
           _, items = parse_file(file)
