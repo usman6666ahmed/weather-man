@@ -1,30 +1,21 @@
 # frozen_string_literal: true
 
 require './csv_module'
+require './args_module'
 
-help_message = 'usage ./weather-man -e 2002/12 /path/to/file'
+args_obj = ARGSModule::ArgsParser.new ARGV
+args = args_obj.to_object
 
-if ARGV.length < 3
-  puts help_message
-  exit(1)
-end
+p args
 
-flag_valid = ARGV[0] =~ /-[aec]/ ? true : false
-unless flag_valid
-  puts "Unknown identifier #{ARGV[0]}"
-  exit(1)
-end
+# FOLDER = './datasets/lahore_weather/*'
 
-date_pattern = ARGV[0] == '-a' || ARGV[0] == '-c' ? %r{^[0-9]{4}/[0-9]{2}$} : /^[0-9]{4}$/
-date_valid = ARGV[1] =~ date_pattern ? true : false
-puts date_valid ? 'Works' : help_message
+# csv_files = Dir[FOLDER].select { |name| name.include? '.txt' }
 
-FOLDER = './datasets/lahore_weather/*'
+# c = CSVModule::CSVProcessor.new(FOLDER, true)
 
-csv_files = Dir[FOLDER].select { |name| name.include? '.txt' }
+# max_temp c.max_temp
+# min_temp = c.min_temp
 
-# c = CSVModule::CSVProcessor.new(csv_files[ARGV[2].to_i], false)
-c = CSVModule::CSVProcessor.new(FOLDER, true)
-
-print "Lowest temprate was #{c.max_temp['max_temp']}C at #{c.max_temp['date']}"
-puts c.min_temp['max_temp']
+# print "Lowest temprature was #{min_temp['min_temp']}C at #{min_temp['date']}\n"
+# print "Highest temprature was #{max_temp['max_temp']}C at #{max_temp['date']}\n"
