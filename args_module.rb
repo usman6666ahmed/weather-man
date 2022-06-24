@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module ARGSModule
-
   # Parsing CLI arguments in a
   # better, more standard manner
   class ArgsParser
@@ -12,6 +11,16 @@ module ARGSModule
     @is_folder = false
     @path = ''
 
+    private
+
+    def validate_path(path)
+      if @is_folder
+        File.directory?(path) ? path : nil
+      else
+        File.exist?(path) ? path : nil
+      end
+    end
+
     def validate_flag(flag)
       flag =~ /-[aec]/ ? flag : nil
     end
@@ -21,11 +30,13 @@ module ARGSModule
       date =~ date_pattern ? date : nil
     end
 
+    public
+
     def initialize(args_array)
       @help_message = "usage ./weather-man -a 2002/12 /path/to/file \nusage ./weather-man -c 2002/12 /path/to/file \nusage ./weather-man -e 2002 /path/to/file \n"
 
       if args_array.length != 3
-        puts 'Missing parameters\n'
+        puts "Missing parameters\n"
         puts @help_message
         exit(1)
       end
@@ -48,9 +59,16 @@ module ARGSModule
 
       @date = date_valid
 
-      @path = args_array[2]
-
       @is_folder = @flag == '-a' || @flag == '-c' ? false : true
+
+      path_valid = validate_path(args_array[2])
+      if path_valid.nil?
+        puts "Path does not exist: \" #{args_array[2]} \""
+        puts @help_message
+        exit(1)
+      end
+
+      @path = path_valid
     end
 
     def to_object

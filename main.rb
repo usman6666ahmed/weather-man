@@ -8,14 +8,10 @@ args = args_obj.to_object
 
 p args
 
-# FOLDER = './datasets/lahore_weather/*'
+c = CSVModule::CSVProcessor.new(args['path'], args['is_folder'])
 
-# csv_files = Dir[FOLDER].select { |name| name.include? '.txt' }
+max_temp = c.max_temp
+min_temp = c.min_temp
 
-# c = CSVModule::CSVProcessor.new(FOLDER, true)
-
-# max_temp c.max_temp
-# min_temp = c.min_temp
-
-# print "Lowest temprature was #{min_temp['min_temp']}C at #{min_temp['date']}\n"
-# print "Highest temprature was #{max_temp['max_temp']}C at #{max_temp['date']}\n"
+print "Lowest temprature was #{min_temp['min_temp']}C at #{min_temp['date']}\n"
+print "Highest temprature was #{max_temp['max_temp']}C at #{max_temp['date']}\n"
