@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+require './date_module'
 module ARGSModule
   # Parsing CLI arguments in a
   # better, more standard manner
@@ -15,7 +15,7 @@ module ARGSModule
 
     def validate_path(path)
       if @is_folder
-        File.directory?(path) ? path : nil
+        File.directory?(path) ? "#{path}/*" : nil
       else
         File.exist?(path) ? path : nil
       end
@@ -58,6 +58,8 @@ module ARGSModule
       end
 
       @date = date_valid
+      @date = DateModule::DateParser.new @date
+      @date = @date.to_string
 
       @is_folder = @flag == '-a' || @flag == '-c' ? false : true
 
@@ -67,7 +69,6 @@ module ARGSModule
         puts @help_message
         exit(1)
       end
-
       @path = path_valid
     end
 

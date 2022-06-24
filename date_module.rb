@@ -3,7 +3,7 @@ module DateModule
   class DateParser
 
     @year = 0
-    @month = 0
+    @month = ""
 
     @calender = %w[
       Jan Feb Mar Apr
@@ -20,8 +20,6 @@ module DateModule
         Sep Oct Nov Dec
       ]
 
-      puts raw_date.split "/"
-
       @year = raw_date.split "/"
       @year = @year[0].to_i
 
@@ -36,6 +34,10 @@ module DateModule
         "year" => @year,
         "month" => @month
       }
+    end
+
+    def to_string()
+      "#{@year}_#{@month}"
     end
 
   end
