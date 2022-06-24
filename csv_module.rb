@@ -94,7 +94,20 @@ module CSVModule
 
     def initialize(path, is_folder)
       if is_folder == true
-        puts 'Hi'
+        csv_files = Dir[FOLDER].select { |name| name.include? '.txt' }
+
+        for file in csv_files
+
+          _, items = parse_file(file)
+          if !@rows
+            @rows = items
+          else
+            @rows.concat(items)
+          end
+
+        end
+
+
       else
         @columns, @rows = parse_file(path)
       end

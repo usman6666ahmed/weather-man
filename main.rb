@@ -2,28 +2,29 @@
 
 require './csv_module'
 
+help_message = 'usage ./weather-man -e 2002/12 /path/to/file'
+
 if ARGV.length < 3
-  puts 'usage ./weather-man -e 2002/12 /path/to/file'
+  puts help_message
   exit(1)
 end
 
-option_valid = (ARGV[0] =~ /-[aec]/) ? true:false
-if !option_valid
-  puts 'Invalid identifier ' + ARGV[0]
+flag_valid = ARGV[0] =~ /-[aec]/ ? true : false
+unless flag_valid
+  puts "Unknown identifier #{ARGV[0]}"
   exit(1)
 end
 
-date_pattern = ARGV[0] == '-a' || ARGV[0] == '-c' ? /^[0-9]{4}\/[0-9]{2}$/ : /^[0-9]{4}$/
-date_valid = (ARGV[1] =~ date_pattern) ? true:false
-puts date_valid
+date_pattern = ARGV[0] == '-a' || ARGV[0] == '-c' ? %r{^[0-9]{4}/[0-9]{2}$} : /^[0-9]{4}$/
+date_valid = ARGV[1] =~ date_pattern ? true : false
+puts date_valid ? 'Works' : help_message
 
+FOLDER = './datasets/lahore_weather/*'
 
-# FOLDER = './datasets/lahore_weather/*'
+csv_files = Dir[FOLDER].select { |name| name.include? '.txt' }
 
-# csv_files = Dir[FOLDER].select { |name| name.include? '.csv' }
+# c = CSVModule::CSVProcessor.new(csv_files[ARGV[2].to_i], false)
+c = CSVModule::CSVProcessor.new(FOLDER, true)
 
-# _c = CSVModule::CSVProcessor.new(csv_files[0], false)
-# c = CSVModule::CSVProcessor.new('./datasets/data.csv', false)
-
-# puts c.get_max_temp['max_temp']
-# puts c.get_min_temp['max_temp']
+print "Lowest temprate was #{c.max_temp['max_temp']}C at #{c.max_temp['date']}"
+puts c.min_temp['max_temp']
