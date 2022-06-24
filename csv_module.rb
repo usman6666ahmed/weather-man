@@ -48,7 +48,7 @@ module CSVModule
     @columns = []
     @rows = []
 
-    def get_max_temp
+    def max_temp
       max_temp = @rows[0]
       @rows.each do |item|
         max_temp = item if max_temp.to_object['max_temp'] > item.to_object['max_temp']
@@ -57,7 +57,7 @@ module CSVModule
       max_temp.to_object
     end
 
-    def get_min_temp
+    def min_temp
       min_temp = @rows[0]
       @rows.each do |item|
         min_temp = item if min_temp.to_object['min_temp'] < item.to_object['min_temp']
