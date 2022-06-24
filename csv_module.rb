@@ -25,10 +25,10 @@ module CSVModule
     def initialize(date, min_temp, max_temp, min_humid, max_humid)
       @date = Date.parse date
 
-      @min_temp = min_temp || 0
-      @max_temp = max_temp || 0
-      @min_humid = min_humid || 0
-      @max_humid = max_humid || 0
+      @min_temp = min_temp.to_i || 0
+      @max_temp = max_temp.to_i || 0
+      @min_humid = min_humid.to_i || 0
+      @max_humid = max_humid.to_i || 0
     end
 
     def to_object
@@ -49,21 +49,21 @@ module CSVModule
     @rows = []
 
     def max_temp
-      max_temp = @rows[0]
+      max = @rows[0]
       @rows.each do |item|
-        max_temp = item if max_temp.to_object['max_temp'] > item.to_object['max_temp']
+        max = item if max.to_object['max_temp'] < item.to_object['max_temp']
       end
 
-      max_temp.to_object
+      max.to_object
     end
 
     def min_temp
-      min_temp = @rows[0]
+      min = @rows[0]
       @rows.each do |item|
-        min_temp = item if min_temp.to_object['min_temp'] < item.to_object['min_temp']
+        min = item if min.to_object['min_temp'] > item.to_object['min_temp']
       end
 
-      min_temp.to_object
+      min.to_object
     end
 
     def parse_file(file_path)
@@ -96,17 +96,14 @@ module CSVModule
       if is_folder == true
         csv_files = Dir[FOLDER].select { |name| name.include? '.txt' }
 
-        for file in csv_files
-
+        csv_files.each do |file|
           _, items = parse_file(file)
           if !@rows
             @rows = items
           else
             @rows.concat(items)
           end
-
         end
-
 
       else
         @columns, @rows = parse_file(path)
