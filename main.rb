@@ -2,16 +2,31 @@
 
 require './csv_module'
 require './args_module'
+require './date_module'
+require './printer_module'
+require 'json'
 
 args_obj = ARGSModule::ArgsParser.new ARGV
+
 args = args_obj.to_object
 
-p args
+csv_data = CSVModule::CSVProcessor.new(args['path'], args['is_folder'], args['date'])
 
-c = CSVModule::CSVProcessor.new(args['path'], args['is_folder'])
+printer = PrinterModule::Printer.new
 
-max_temp = c.max_temp
-min_temp = c.min_temp
+case args['flag']
+when '-e'
+  data = csv_data.report
+  printer.report_with_dates(data)
+when '-a'
+  data = csv_data.report
+  printer.report(data)
+when '-c'
+  data = csv_data.month_data
+  printer.two_bars data
+  printer.one_bar data
+else
+  puts 'Invalid flag'
+  exit(1)
+end
 
-print "Lowest temprature was #{min_temp['min_temp']}C at #{min_temp['date']}\n"
-print "Highest temprature was #{max_temp['max_temp']}C at #{max_temp['date']}\n"

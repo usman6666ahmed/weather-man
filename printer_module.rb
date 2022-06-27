@@ -10,7 +10,6 @@ module PrinterModule
     end
 
     def two_bars(data)
-      puts data[0]
       data.each_with_index do |item, index|
         message = ''
         message += "#{index + 1} "
@@ -20,14 +19,11 @@ module PrinterModule
         message = ''
         message += "#{index + 1} "
         message += "#{generate_plusses(item['max_temp'], :red)} #{item['max_temp']}C\n"
-        puts message
-
-        puts
+        puts "#{message}\n\n"
       end
     end
 
     def one_bar(data)
-      puts data[0]
       data.each_with_index do |item, index|
         message = ''
         message += "#{index + 1} "
@@ -40,6 +36,36 @@ module PrinterModule
 
         puts
       end
+    end
+
+    def report(data)
+      message = ''
+
+      max = data['max']
+      message += "Highest Average: #{max[:val]}C \n"
+
+      min = data['min']
+      message += "Lowest Average: #{min[:val]}C \n"
+
+      humid = data['hum']
+      message += "Average Humidity: #{humid[:val]}% \n"
+
+      puts message
+    end
+
+    def report_with_dates(data)
+      message = ''
+
+      max = data['max']
+      message += "Highest: #{max[:val]}C at #{max[:date]}\n"
+
+      min = data['min']
+      message += "Lowest: #{min[:val]}C  at #{min[:date]}\n"
+
+      humid = data['hum']
+      message += "Humid: #{humid[:val]}%  at #{humid[:date]}\n"
+
+      puts message
     end
   end
 end
