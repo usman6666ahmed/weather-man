@@ -3,12 +3,29 @@
 require 'colorize'
 
 module PrinterModule
+  ##
+  # This class is used for printing data
+  # obtained from CSV Parser class
   class Printer
-    def generate_plusses(string, color)
-      s = '+' * string
+    private
+
+    def generate_plusses(times, color)
+      s = '+' * times
       s.colorize(color)
     end
 
+    public
+
+    ##
+    # Draw one red and one blue line of '+'
+    #
+    # Red line represents maximum temprature
+    #
+    # Blue line represents minimum temprature
+    #
+    # These lines will be separated by a newline
+    #
+    ##
     def two_bars(data)
       data.each_with_index do |item, index|
         message = ''

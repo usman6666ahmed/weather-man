@@ -34,7 +34,9 @@ module ARGSModule
     public
 
     def initialize(args_array)
-      @help_message = "usage ./weather-man -a 2002/12 /path/to/file \nusage ./weather-man -c 2002/12 /path/to/file \nusage ./weather-man -e 2002 /path/to/file \n"
+      @help_message = "usage ./weather-man -a 2002/12 /path/to/file \n"
+      @help_message += "usage ./weather-man -c 2002/12 /path/to/file \n"
+      @help_message += "usage ./weather-man -e 2002 /path/to/file \n"
 
       if args_array.length != 3
         puts "Missing parameters\n"
