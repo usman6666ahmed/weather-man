@@ -29,4 +29,3 @@ else
   puts 'Invalid flag'
   exit(1)
 end
-

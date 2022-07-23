@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 module DateModule
+  # This class parses dates in objects
+  # that can be compared
+  # Also these object can be converted into
+  # a specific date format that can be used
+  # for searching in the datasets directory
   class DateParser
     @year = 0
     @month = ''
