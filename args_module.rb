@@ -64,6 +64,7 @@ module ARGSModule
         puts @help_message
         exit(1)
       end
+      'ok'
     end
 
     public
